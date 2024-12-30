@@ -1,0 +1,43 @@
+1d0
+< 
+74d72
+< %token TRI
+439,476d436
+<   }
+<   | TRI LPAR exp RPAR
+<   {
+< 
+<     $$ = getNewRegister(program);
+< 
+<     // We create a branch to handle the case where $3 < 0
+<     t_label *lLessThanZero = createLabel(program);
+<     genBLT(program, $3, REG_0, lLessThanZero);
+< 
+<     // Otherwise, we calculate ($3 * ($3 + 1)) / 2
+<     t_regID r1 = getNewRegister(program);
+<     t_regID r2 = getNewRegister(program);
+<     t_regID r3 = getNewRegister(program);
+< 
+<     // r2 = 1
+<     genLI(program, r2, 1);
+< 
+<     // r1 = $3 + 1
+<     genADD(program, r1, $3, r2);
+< 
+<     // r3 = $3 * r1
+<     genMUL(program, r3, $3, r1);
+< 
+<     // r2 = 2
+<     genLI(program, r2, 2);
+< 
+<     // $$ = r3 / 2
+<     genDIV(program, $$, r3, r2);
+< 
+<     // Jump to exit after computation
+<     t_label *lExit = createLabel(program);
+<     genJ(program, lExit);
+< 
+<     // In the less than zero case, we assign $$ to 0 and jump to lExit
+<     assignLabel(program, lLessThanZero);
+<     genLI(program, $$, 0);
+<     assignLabel(program, lExit);
