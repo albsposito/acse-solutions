@@ -1,0 +1,7 @@
+int x,y, z;
+x = tri(-2);
+y = tri(5);
+z = tri(y * 3);
+write(x);
+write(y);
+write(z);

@@ -1,0 +1,37 @@
+73d72
+< %token REPLACE
+187d185
+<   | replace_statement SEMI
+308,339d305
+<   }
+< ;
+< 
+< replace_statement
+<   : REPLACE LPAR IDENTIFIER COMMA exp COMMA exp RPAR
+<   {
+< 
+<     //t_symbol *var = getSymbol(program, $3);
+<     t_symbol *array = getSymbol(program, $3);
+<     t_regID counter = getNewRegister(program); // Used as an index counter
+<     t_regID temp = getNewRegister(program); // Used to load the value of array[counter]
+<     t_regID arraySize = getNewRegister(program);
+<     genLI(program, counter, 0);
+<     genLI(program, arraySize, array->arraySize);
+< 
+<     t_label *lLoop = createLabel(program);
+<     assignLabel(program, lLoop);
+< 
+<     // We create a branch that takes the value of the element at index counter and compares it with expression
+<     temp = genLoadArrayElement(program, array, counter);
+<     t_label *lSkip = createLabel(program);
+<     genBNE(program, temp, $5, lSkip);
+< 
+<     // We create a branch that replaces the content of array[counter] with exp2 ($7)
+<     genStoreRegisterToArrayElement(program, array, counter, $7);
+< 
+<     // We create a branch that checks if counter+1 is a valid array position
+<     assignLabel(program, lSkip);
+<     genADDI(program, counter, counter, 1);
+<     genBLT(program, counter, arraySize, lLoop);
+< 
+< 
