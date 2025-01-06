@@ -1,0 +1,40 @@
+53d52
+<   t_repeatStmt repeatStmt;
+81d79
+< %token <repeatStmt> REPEAT
+187d184
+<   | repeat_statement SEMI
+309,341d305
+<   }
+< ;
+< 
+< repeat_statement
+<   : REPEAT LPAR var_id ASSIGN exp COMMA exp COMMA
+<   {
+< 
+<     // Create label to jump to if we need to exit the loop
+<     $1.lExit = createLabel(program);
+<     $1.lLoop = createLabel(program);
+< 
+<     // Assign 'exp' to the IDENTIFIER
+<     genStoreRegisterToVariable(program, $3, $5);
+< 
+<     // If exp2 is less than 0, we exit and terminate
+<     genBLE(program, $7, REG_0, $1.lExit);
+< 
+<     // Otherwise, we instantiate the counter register
+<     $1.counter = getNewRegister(program);
+<     genADDI(program, $1.counter, $7, 0);
+< 
+<     // We set the label for the loop here so that exp3 is reduced and thus re-computed whenever we jump
+<     assignLabel(program, $1.lLoop);
+< 
+<   }
+<   exp RPAR
+<   {
+<     genStoreRegisterToVariable(program, $3, $10);
+<     genSUBI(program, $1.counter, $1.counter, 1);
+<     genBGT(program, $1.counter, REG_0, $1.lLoop);
+< 
+<     assignLabel(program, $1.lExit);
+< 
